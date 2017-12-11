@@ -1,0 +1,13 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=AKUYA
+Comment=AKUYA P2P Cryptocurrency
+Comment[ru]=AKUYA, P2P криптовалюта
+Comment[fr]=AKUYA, monnaie virtuelle cryptographique pair à pair
+Comment[tr]=AKUYA, eşten eşe kriptografik sanal para birimi
+Exec=/usr/bin/AKUYA-qt
+Terminal=false
+Type=Application
+Icon=/usr/share/pixmaps/AKUYA80.xpm
+MimeType=x-scheme-handler/AKUYA;
+Categories=Office;

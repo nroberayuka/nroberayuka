@@ -1,0 +1,68 @@
+#!/bin/sh
+
+# PROVIDE: AKUYA
+# REQUIRE: LOGIN
+# KEYWORD: shutdown
+
+#
+# Add the following lines to /etc/rc.conf.local or /etc/rc.conf
+# to enable this service:
+#
+# AKUYA_enable (bool): Set to NO by default. Set this variable to YES if you want to enable AKUYA service.
+# AKUYA_config (path): Set to /usr/local/etc/AKUYA.conf by default.
+# AKUYA_user:  The user account AKUYA daemon runs as. It uses 'root' user by default.
+# AKUYA_group: The group account AKUYA daemon runs as. It uses 'wheel' group by default.
+# AKUYA_datadir (str): Default to "/var/db/AKUYA". Base data directory.
+
+. /etc/rc.subr
+
+name=AKUYA
+rcvar=AKUYA_enable
+
+: ${AKUYA_enable:=NO}
+: ${AKUYA_config=/usr/local/etc/AKUYA.conf}
+: ${AKUYA_datadir=/var/db/AKUYA}
+: ${AKUYA_user="root"}
+: ${AKUYA_group="wheel"}
+
+required_files=${AKUYA_config}
+command=/usr/local/bin/AKUYAd
+AKUYA_chdir=${AKUYA_datadir}
+pidfile="${AKUYA_datadir}/AKUYAd.pid"
+stop_cmd=AKUYA_stop
+command_args="-conf=${AKUYA_config} -datadir=${AKUYA_datadir} -daemon -pid=${pidfile}"
+start_precmd="${name}_prestart"
+
+AKUYA_create_datadir()
+{
+	echo "Creating data directory"
+	eval mkdir -p ${AKUYA_datadir}
+	[ $? -eq 0 ] && chown -R ${AKUYA_user}:${AKUYA_group} ${AKUYA_datadir}
+}
+
+AKUYA_prestart()
+{
+	if [ ! -d "${AKUYA_datadir}/." ]; then
+		AKUYA_create_datadir || return 1
+	fi
+}
+
+AKUYA_requirepidfile()
+{
+	if [ ! "0`check_pidfile ${pidfile} ${command}`" -gt 1 ]; then
+		echo "${name} not running? (check $pidfile)."
+		exit 1
+	fi
+}
+
+AKUYA_stop()
+{
+    AKUYA_requirepidfile
+
+	echo "Stopping ${name}."
+	eval ${command} -conf=${AKUYA_config} -datadir=${AKUYA_datadir} stop
+	wait_for_pids ${rc_pid}
+}
+
+load_rc_config $name
+run_rc_command "$1"

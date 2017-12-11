@@ -1,0 +1,5 @@
+AKUYA-qt usr/bin
+share/pixmaps/AKUYA32.xpm usr/share/pixmaps
+share/pixmaps/AKUYA80.xpm usr/share/pixmaps
+debian/AKUYA-qt.desktop usr/share/applications
+debian/AKUYA-qt.protocol usr/share/kde4/services/
